@@ -7,6 +7,7 @@ namespace AdvancedSharpAdbClient
     using System;
     using System.Buffers;
     using System.Drawing;
+    using System.Runtime.InteropServices;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -44,9 +45,10 @@ namespace AdvancedSharpAdbClient
             this.Device = device;
 
             this.client = client;
-
             // Initialize the headerData buffer
-            this.headerData = new byte[52];
+            //Note: This was originaly 52 when hand calculated it should be 56
+            //Note: Possible way to calculate this would be to use the type and iterate over properties and get size of each one and add up.
+            this.headerData = new byte[56];
         }
 
         /// <summary>
@@ -143,7 +145,9 @@ namespace AdvancedSharpAdbClient
         {
             if (this.Data != null)
             {
-                ArrayPool<byte>.Shared.Return(this.Data, clearArray: false);
+                //Data isn't in ArrayPool- was in older version but removed in an update.
+                this.Data = null;
+                //ArrayPool<byte>.Shared.Return(this.Data, clearArray: false);
             }
 
             this.headerData = null;
